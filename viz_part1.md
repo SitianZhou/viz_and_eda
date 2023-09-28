@@ -151,4 +151,91 @@ weather_df |>
 
     ## Warning: Removed 17 rows containing missing values (`geom_point()`).
 
-![](viz_part1_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](viz_part1_files/figure-gfm/unnamed-chunk-8-1.png)<!-- --> hex plot
+
+``` r
+weather_df |> 
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_hex()
+```
+
+    ## Warning: Removed 17 rows containing non-finite values (`stat_binhex()`).
+
+![](viz_part1_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+
+line plot
+
+``` r
+weather_df |> 
+  filter(name == "Waterhole_WA") |> 
+  ggplot(aes(x = date, y = tmax)) +
+  geom_line(alpha = 0.5) +
+  geom_point(size = 0.5)
+```
+
+    ## Warning: Removed 1 row containing missing values (`geom_line()`).
+
+    ## Warning: Removed 16 rows containing missing values (`geom_point()`).
+
+![](viz_part1_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+## univariate plotting
+
+histogram
+
+``` r
+ggplot(weather_df, aes(x = tmax, fill = name)) +
+  geom_histogram(position = "dodge")
+```
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+    ## Warning: Removed 17 rows containing non-finite values (`stat_bin()`).
+
+![](viz_part1_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+let’s use a density plot
+
+``` r
+ggplot(weather_df, aes(x = tmax, fill = name)) +
+  geom_density(alpha = 0.3, adjust = 0.75)
+```
+
+    ## Warning: Removed 17 rows containing non-finite values (`stat_density()`).
+
+![](viz_part1_files/figure-gfm/unnamed-chunk-12-1.png)<!-- --> using
+boxplots
+
+``` r
+ggplot(weather_df, aes(y = tmax, x = name)) +
+  geom_boxplot()
+```
+
+    ## Warning: Removed 17 rows containing non-finite values (`stat_boxplot()`).
+
+![](viz_part1_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+
+violin plots
+
+``` r
+ggplot(weather_df, aes(y = tmax, x = name)) +
+  geom_violin()
+```
+
+    ## Warning: Removed 17 rows containing non-finite values (`stat_ydensity()`).
+
+![](viz_part1_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+ridge plot
+
+``` r
+ggplot(weather_df, aes(x = tmax, y = name)) +
+  geom_density_ridges()
+```
+
+    ## Picking joint bandwidth of 1.54
+
+    ## Warning: Removed 17 rows containing non-finite values
+    ## (`stat_density_ridges()`).
+
+![](viz_part1_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->

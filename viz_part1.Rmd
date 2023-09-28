@@ -86,6 +86,64 @@ weather_df |>
   ggplot(aes(x = date, y = tmax, color = name)) +
   geom_point(alpha = 0.3, size = 0.7)
 ```
+hex plot
+
+```{r}
+weather_df |> 
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_hex()
+```
+
+line plot
+
+```{r}
+weather_df |> 
+  filter(name == "Waterhole_WA") |> 
+  ggplot(aes(x = date, y = tmax)) +
+  geom_line(alpha = 0.5) +
+  geom_point(size = 0.5)
+```
+
+
+
+## univariate plotting
+
+histogram
+
+```{r}
+ggplot(weather_df, aes(x = tmax, fill = name)) +
+  geom_histogram(position = "dodge")
+```
+
+let's use a density plot
+
+```{r}
+ggplot(weather_df, aes(x = tmax, fill = name)) +
+  geom_density(alpha = 0.3, adjust = 0.75)
+```
+using boxplots
+
+```{r}
+ggplot(weather_df, aes(y = tmax, x = name)) +
+  geom_boxplot()
+```
+
+violin plots
+
+```{r}
+ggplot(weather_df, aes(y = tmax, x = name)) +
+  geom_violin()
+```
+
+ridge plot
+
+```{r}
+ggplot(weather_df, aes(x = tmax, y = name)) +
+  geom_density_ridges()
+```
+
+
+
 
 
 
