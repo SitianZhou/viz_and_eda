@@ -1,7 +1,7 @@
 EDA: Numeric summaries
 ================
 Sitian Zhou
-2023-09-28
+2023-10-05
 
 ``` r
 library(tidyverse)
@@ -251,3 +251,83 @@ weather_df |>
 | 2023-07-01 |          30.20 |      30.05 |        16.34 |
 | 2023-08-01 |          27.62 |      30.60 |        17.50 |
 | 2023-09-01 |          28.32 |      30.89 |        15.62 |
+
+## Grouped mutate
+
+``` r
+weather_df |> 
+  group_by(name) |> 
+  mutate(
+    mean_tmax = mean(tmax, na.rm = TRUE),
+    centered_tmax = tmax - mean_tmax) |> 
+  ggplot(aes(x = date, y = centered_tmax, color = name)) + 
+  geom_point()
+```
+
+    ## Warning: Removed 58 rows containing missing values (`geom_point()`).
+
+<img src="eda_files/figure-gfm/unnamed-chunk-13-1.png" width="90%" />
+
+``` r
+weather_df |> 
+  group_by(name, month) |> 
+  mutate(tmax_rank = min_rank(desc(tmax))) |> 
+  filter(tmax_rank < 2)
+```
+
+    ## # A tibble: 40 × 8
+    ## # Groups:   name, month [27]
+    ##    name           id          date        prcp  tmax  tmin month      tmax_rank
+    ##    <chr>          <chr>       <date>     <dbl> <dbl> <dbl> <date>         <int>
+    ##  1 CentralPark_NY USW00094728 2023-01-04     5  18.9   9.4 2023-01-01         1
+    ##  2 CentralPark_NY USW00094728 2023-02-16    18  21.1  13.3 2023-02-01         1
+    ##  3 CentralPark_NY USW00094728 2023-03-21     0  17.2   4.4 2023-03-01         1
+    ##  4 CentralPark_NY USW00094728 2023-03-26     0  17.2   6.7 2023-03-01         1
+    ##  5 CentralPark_NY USW00094728 2023-04-14     0  32.8  21.1 2023-04-01         1
+    ##  6 CentralPark_NY USW00094728 2023-05-12     0  30.6  18.3 2023-05-01         1
+    ##  7 CentralPark_NY USW00094728 2023-06-02    61  32.8  18.9 2023-06-01         1
+    ##  8 CentralPark_NY USW00094728 2023-07-05     0  33.9  22.2 2023-07-01         1
+    ##  9 CentralPark_NY USW00094728 2023-08-13   175  31.1  20.6 2023-08-01         1
+    ## 10 CentralPark_NY USW00094728 2023-08-21     0  31.1  22.8 2023-08-01         1
+    ## # ℹ 30 more rows
+
+lags
+
+``` r
+# must be after group_by() otherwise R ignors name differences
+weather_df |> 
+  group_by(name) |> 
+  mutate(yeserday_tmax = lag(tmax, 3))
+```
+
+    ## # A tibble: 819 × 8
+    ## # Groups:   name [3]
+    ##    name           id       date        prcp  tmax  tmin month      yeserday_tmax
+    ##    <chr>          <chr>    <date>     <dbl> <dbl> <dbl> <date>             <dbl>
+    ##  1 CentralPark_NY USW0009… 2023-01-01     0  12.8   9.4 2023-01-01          NA  
+    ##  2 CentralPark_NY USW0009… 2023-01-02     5  13.3   9.4 2023-01-01          NA  
+    ##  3 CentralPark_NY USW0009… 2023-01-03   107  14.4   8.3 2023-01-01          NA  
+    ##  4 CentralPark_NY USW0009… 2023-01-04     5  18.9   9.4 2023-01-01          12.8
+    ##  5 CentralPark_NY USW0009… 2023-01-05     3  10     6.7 2023-01-01          13.3
+    ##  6 CentralPark_NY USW0009… 2023-01-06    69   9.4   3.9 2023-01-01          14.4
+    ##  7 CentralPark_NY USW0009… 2023-01-07     0   7.2   2.8 2023-01-01          18.9
+    ##  8 CentralPark_NY USW0009… 2023-01-08     0   5     0.6 2023-01-01          10  
+    ##  9 CentralPark_NY USW0009… 2023-01-09     3   6.7   2.8 2023-01-01           9.4
+    ## 10 CentralPark_NY USW0009… 2023-01-10     0   5     3.3 2023-01-01           7.2
+    ## # ℹ 809 more rows
+
+``` r
+weather_df |> 
+  group_by(name) |> 
+  mutate(temp_change = tmax - lag(tmax)) |> 
+  summarize(
+    sd_temp_change = sd(temp_change, na.rm = TRUE)
+  )
+```
+
+    ## # A tibble: 3 × 2
+    ##   name           sd_temp_change
+    ##   <chr>                   <dbl>
+    ## 1 CentralPark_NY           4.03
+    ## 2 Molokai_HI               1.24
+    ## 3 Waterhole_WA             2.94
